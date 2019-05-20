@@ -102,9 +102,17 @@ import UIKit
      * Tells us if a bulletin is currently being shown. Defaults to false
      */
 
-    @objc public var isShowingBulletin: Bool { 
-        return bulletinController?.presentingViewController != nil
+    @objc public var isShowingBulletin: Bool {
+        
+        if presentModally {
+            return bulletinController?.presentingViewController != nil
+        } else {
+            return bulletinController?.parent != nil
+        }
+        
     }
+    
+    @objc public var presentModally: Bool = false
 
     // MARK: - Private Properties
 
@@ -404,8 +412,38 @@ extension BLTNItemManager {
         }
 
         bulletinController.modalPresentationCapturesStatusBarAppearance = true
-        presentingVC.present(bulletinController, animated: animated, completion: completion)
-
+        if presentModally {
+            presentingVC.present(bulletinController, animated: animated, completion: completion)
+        } else {
+            presentingVC.addChild(bulletinController)
+            presentingVC.view.addSubview(bulletinController.view)
+            bulletinController.view.translatesAutoresizingMaskIntoConstraints = false
+            
+            let subview = bulletinController.view!
+            let container = presentingVC.view!
+            if #available(iOS 11.0, *) {
+                subview.leadingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
+                subview.trailingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
+                subview.topAnchor.constraint(equalTo: container.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+                subview.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
+            } else {
+                
+                subview.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0).isActive = true
+                subview.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0).isActive = true
+                
+                if let navBar = presentingVC.navigationController?.navigationBar {
+                    subview.topAnchor.constraint(equalTo: navBar.bottomAnchor, constant: 0).isActive = true
+                } else {
+                    subview.topAnchor.constraint(equalTo: container.topAnchor, constant: 0).isActive = true
+                }
+                
+                subview.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 0).isActive = true
+            }
+            
+            bulletinController.didMove(toParent: presentingVC)
+            BulletinPresentationAnimationController.animateTransition(toViewController: bulletinController, containerView: presentingVC.view)
+            completion?()
+        }
     }
     
     /**
@@ -455,9 +493,17 @@ extension BLTNItemManager {
         currentItem.tearDown()
         currentItem.manager = nil
 
-        bulletinController.dismiss(animated: animated) {
+        if presentModally {
+            bulletinController.dismiss(animated: animated) {
+                self.completeDismissal()
+            }
+        } else {
+            bulletinController.willMove(toParent: nil)
+            bulletinController.view.removeFromSuperview()
+            bulletinController.removeFromParent()
             self.completeDismissal()
         }
+        
 
         isPrepared = false
 

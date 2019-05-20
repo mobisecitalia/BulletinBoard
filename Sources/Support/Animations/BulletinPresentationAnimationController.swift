@@ -18,11 +18,50 @@ class BulletinPresentationAnimationController: NSObject, UIViewControllerAnimate
     init(style: BLTNBackgroundViewStyle) {
         self.style = style
     }
-
+    
     // MARK: - Transition
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.3
+    }
+    
+    static func animateTransition(toViewController toVC:BulletinViewController, containerView:UIView) {
+        let rootView = toVC.view!
+        let contentView = toVC.contentView
+        let backgroundView = toVC.backgroundView!
+        
+        // Add root view
+        
+        containerView.addSubview(rootView)
+        
+        // Prepare background view
+        
+        rootView.insertSubview(backgroundView, at: 0)
+        backgroundView.leadingAnchor.constraint(equalTo: rootView.leadingAnchor).isActive = true
+        backgroundView.trailingAnchor.constraint(equalTo: rootView.trailingAnchor).isActive = true
+        backgroundView.topAnchor.constraint(equalTo: rootView.topAnchor).isActive = true
+        backgroundView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor).isActive = true
+        
+        rootView.setNeedsLayout()
+        contentView.setNeedsLayout()
+        
+        rootView.layoutIfNeeded()
+        contentView.layoutIfNeeded()
+        backgroundView.layoutIfNeeded()
+        
+        // Animate presentation
+        
+        let duration = 0.3
+        let options = UIView.AnimationOptions(rawValue: 7 << 16)
+        
+        let animations = {
+            toVC.moveIntoPlace()
+            backgroundView.show()
+        }
+        
+        UIView.animate(withDuration: duration, delay: 0, options: options, animations: animations) { _ in
+            
+        }
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
