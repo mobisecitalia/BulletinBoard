@@ -431,8 +431,8 @@ extension BLTNItemManager {
                 subview.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0).isActive = true
                 subview.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0).isActive = true
                 
-                if let navBar = presentingVC.navigationController?.navigationBar {
-                    subview.topAnchor.constraint(equalTo: navBar.bottomAnchor, constant: 0).isActive = true
+                if let _ = presentingVC.navigationController?.navigationBar {
+                    subview.topAnchor.constraint(equalTo: presentingVC.topLayoutGuide.bottomAnchor, constant: 0).isActive = true
                 } else {
                     subview.topAnchor.constraint(equalTo: container.topAnchor, constant: 0).isActive = true
                 }
