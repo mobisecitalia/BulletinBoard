@@ -471,24 +471,11 @@ extension BLTNItemManager {
             
             let subview = bulletinController.view!
             let container = presentingVC.view!
-            if #available(iOS 11.0, *) {
-                subview.leadingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
-                subview.trailingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-                subview.topAnchor.constraint(equalTo: container.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-                subview.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
-            } else {
-                
-                subview.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0).isActive = true
-                subview.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0).isActive = true
-                
-                if let _ = presentingVC.navigationController?.navigationBar {
-                    subview.topAnchor.constraint(equalTo: presentingVC.topLayoutGuide.bottomAnchor, constant: 0).isActive = true
-                } else {
-                    subview.topAnchor.constraint(equalTo: container.topAnchor, constant: 0).isActive = true
-                }
-                
-                subview.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 0).isActive = true
-            }
+            
+            subview.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 0).isActive = true
+            subview.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 0).isActive = true
+            subview.topAnchor.constraint(equalTo: container.topAnchor, constant: 0).isActive = true
+            subview.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 0).isActive = true
             
             bulletinController.didMove(toParent: presentingVC)
             BulletinPresentationAnimationController.animateTransition(toViewController: bulletinController, containerView: presentingVC.view)
