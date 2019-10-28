@@ -336,6 +336,15 @@ extension BulletinViewController {
         backgroundView.layoutIfNeeded()
 
     }
+    
+    func moveOut() {
+        contentBottomConstraint.constant = self.view.bounds.size.height
+        centerYConstraint.constant = 0
+        
+        view.layoutIfNeeded()
+        contentView.layoutIfNeeded()
+        backgroundView.layoutIfNeeded()
+    }
 
     // MARK: - Presentation/Dismissal
 

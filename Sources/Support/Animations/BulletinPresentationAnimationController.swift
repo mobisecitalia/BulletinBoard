@@ -63,6 +63,28 @@ class BulletinPresentationAnimationController: NSObject, UIViewControllerAnimate
             
         }
     }
+    
+    static func animateTransition(fromViewController fromVC:BulletinViewController, completion: @escaping (()->Void)) {
+        let rootView = fromVC.view!
+//        let contentView = fromVC.contentView
+        let backgroundView = fromVC.backgroundView!
+        
+        // Animate presentation
+        
+        let duration = 0.3
+//        let options = UIView.AnimationOptions(rawValue: 7 << 16)
+        
+        let animations = {
+            fromVC.moveOut()
+            backgroundView.hide()
+        }
+        
+        UIView.animate(withDuration: duration, delay: 0, animations: animations) { _ in
+            rootView.removeFromSuperview()
+            backgroundView.removeFromSuperview()
+            completion()
+        }
+    }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 

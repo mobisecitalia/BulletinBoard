@@ -536,9 +536,10 @@ extension BLTNItemManager {
             }
         } else {
             bulletinController.willMove(toParent: nil)
-            bulletinController.view.removeFromSuperview()
-            bulletinController.removeFromParent()
-            self.completeDismissal()
+            BulletinPresentationAnimationController.animateTransition(fromViewController: bulletinController) { [weak self] in
+                self?.bulletinController.removeFromParent()
+                self?.completeDismissal()
+            }
         }
         
 
